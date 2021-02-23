@@ -1,0 +1,15 @@
+ISPConfig ACME.SH integration version %version%
+
+An easy tool to update ISPConfig certificates with Acme.SH Certificates ( Wildcard Support )
+
+Usage: acmesh_ispconfig.php [OPTIONS]
+
+Options:
+ -d, --domain DOMAIN     pass DOMAIN to be updated ( required )
+ -h, --help              display this help message and exit ( optional )
+ -s, --service           provide services to be reloaded after the certificate has been updated ( optional )
+ -u, --username          the ISPConfig API username ( optional )
+ -p, --password          the ISPConfig API password ( optional )
+ -l, --uri               the ISPConfig remote URI ( optional )
+ -r, --reloadcmd         the reload cmd to be used to restart services ( optional )
+ 
