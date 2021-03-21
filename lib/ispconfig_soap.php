@@ -5,7 +5,7 @@
  * Description: Allows easy changes to SSL Certificates of ISPConfig Websites
  * 
  * @author Aperture Development <developers@aperture-Development.de>
- * @version 0.0.1
+ * @version 0.0.2
  * @license by-sa 4.0
 */
 
@@ -62,7 +62,7 @@ class ISPConfigSoap {
      * @copyright  2021 Aperture Development
      */
     function loadUpdateableDomains(string $domain, string $certificate){
-        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!');}
+        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!' . PHP_EOL . 'Please verify the username and password to log into ISPConfig');}
         $updateableDomains = array();
         $client_ids = array();
 
@@ -71,7 +71,7 @@ class ISPConfigSoap {
         foreach($allDomains as $val) {
             if($val['ssl'] === 'y'){
                 if(md5(trim(str_replace('\r\n', '\n', $certificate))) == md5(trim(str_replace('\r\n', '\n', $val['ssl_cert'])))){
-                    echo 'Certificate for \'' . $val['domain'] . '\' did not change, skipping.' . PHP_EOL;
+                    echo 'Certificate for \'' . $val['domain'] . '\' did not change, skipping...' . PHP_EOL;
                 } else {
                     if(!isset($client_ids[$val['sys_userid']])) {
                         $client_ids[$val['sys_userid']] = $this->client->client_get_id($this->session_id, $val['sys_userid']);
@@ -80,7 +80,7 @@ class ISPConfigSoap {
                         'domain_id' => $val['domain_id'],
                         'client_id' => $client_ids[$val['sys_userid']]
                     );
-                    echo 'Found SSL Change for domain \'' . $val['domain'] . '\'' . PHP_EOL;
+                    echo 'SSL certificate for \'' . $val['domain'] . '\' does not match, marking for update' . PHP_EOL;
                 }
             }
         }
@@ -101,7 +101,7 @@ class ISPConfigSoap {
      * @copyright  2021 Aperture Development
      */
     function updateDomainData(int $domain_id, int $client_id, array $sslInformations){
-        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!');}
+        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!' . PHP_EOL . 'Please verify the username and password to log into ISPConfig');}
         try {
             $this->client->sites_web_domain_update($this->session_id, $client_id, $domain_id, array(
                 'ssl_cert' => $sslInformations['ssl_cert'],
@@ -125,7 +125,7 @@ class ISPConfigSoap {
      * @copyright  2021 Aperture Development
      */
     function logoutSoapClient() {
-        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!');}
+        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!' . PHP_EOL . 'Please verify the username and password to log into ISPConfig');}
         return $this->client->logout($this->session_id);
     }
 
@@ -140,7 +140,7 @@ class ISPConfigSoap {
      * @copyright  2021 Aperture Development
      */
     function __destruct(){
-        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!');}
+        if(!$this->session_id) {throw new Exception('No session ID was Set, aborting execution!' . PHP_EOL . 'Please verify the username and password to log into ISPConfig');}
         $this->client->logout($this->session_id);
     }
 }

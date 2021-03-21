@@ -1,4 +1,4 @@
-ISPConfig ACME.SH integration version %version%
+ISPConfig ACME.SH integration version 0.0.2
 
 An easy tool to update ISPConfig certificates with Acme.SH Certificates ( Wildcard Support )
 

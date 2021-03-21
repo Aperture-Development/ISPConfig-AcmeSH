@@ -6,7 +6,7 @@
  * Description: Allows easy integration of ACME.SH into ISPConfig and to deploy Wildcard Certificates to it.
  * 
  * @author Aperture Development <developers@aperture-Development.de>
- * @version 0.0.1
+ * @version 0.0.2
  * @license by-sa 4.0
 */
 
@@ -33,13 +33,14 @@ $acmeshLocation = '/etc/acmesh/live';
  * DO NOT EDIT STUFF BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!!!
  * #######################################################################
  */
-require_once('./lib/ispconfig_soap.php');
+$scriptPath = dirname(__FILE__);
+require_once($scriptPath . '/lib/ispconfig_soap.php');
 $arguments = getopt('d:m::f::s::u::p::l::r::h', array('domain:', 'service::', 'username::', 'password::', 'uri::', 'reloadcmd::', 'help'));
 /**
  * Check if the help paramater has been used
  */
-if(isset($arguments['h']) || isset($arguments['help'])) {
-    echo file_get_contents('./help.txt');
+if(isset($arguments['h']) || isset($arguments['help']) || count($arguments) === 0) {
+    echo file_get_contents($scriptPath . '/help.txt');
     exit(0);
 }
 
@@ -100,7 +101,7 @@ try {
         $cert     = file_get_contents($acmeshLocation . '/' . $domain . '/' . $domain . '.cer');
         $privkey  = file_get_contents($acmeshLocation . '/' . $domain . '/' . $domain . '.key');
         $bundle   = file_get_contents($acmeshLocation . '/' . $domain . '/fullchain.cer');
-        echo 'Loading certificate';
+        echo 'Loading certificate data for: ' . $domain . PHP_EOL;
 
         // Check if certificate has been loaded successfully
         if(!isset($cert) || !isset($privkey) || !isset($bundle)){
@@ -110,7 +111,7 @@ try {
         // Read certificate and load all applicable domains
         $sslCert = openssl_x509_parse($cert);
         preg_match_all('/DNS:([*a-zA-Z0-9\.-]+)/', $sslCert['extensions']['subjectAltName'], $certDomains);
-        echo 'Found certificate valid for ' . $sslCert['extensions']['subjectAltName'];
+        echo 'Found certificate valid for ' . $sslCert['extensions']['subjectAltName'] . PHP_EOL;
 
         /**
          * Load all domains this change applies to ()
@@ -131,7 +132,7 @@ try {
                 'ssl_bundle' => $bundle,
                 'ssl_key' => $privkey
             ));
-            echo 'Updated SSL Certificate for domain \'' . $key . '\'' . PHP_EOL;
+            echo 'Updated \'' . $key . '\' with new certificate' . PHP_EOL;
         }
     }
 
